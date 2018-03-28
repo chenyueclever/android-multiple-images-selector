@@ -1,4 +1,4 @@
-package com.zfdang.multiple_images_selector.utilities;
+package com.cyue.multiple_images_selector.utilities;
 
 import android.net.Uri;
 

@@ -1,4 +1,4 @@
-package com.zfdang.multiple_images_selector;
+package com.cyue.multiple_images_selector;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -9,9 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.zfdang.multiple_images_selector.models.FolderItem;
-import com.zfdang.multiple_images_selector.models.FolderListContent;
-import com.zfdang.multiple_images_selector.utilities.DraweeUtils;
+
+import com.cyue.multiple_images_selector.models.FolderItem;
+import com.cyue.multiple_images_selector.models.FolderListContent;
+import com.cyue.multiple_images_selector.utilities.DraweeUtils;
 
 import java.io.File;
 import java.util.List;

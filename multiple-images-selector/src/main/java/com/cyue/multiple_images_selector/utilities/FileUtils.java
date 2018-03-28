@@ -1,4 +1,4 @@
-package com.zfdang.multiple_images_selector.utilities;
+package com.cyue.multiple_images_selector.utilities;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -34,6 +34,21 @@ public class FileUtils {
         return File.createTempFile(JPEG_FILE_PREFIX, JPEG_FILE_SUFFIX, dir);
     }
 
+    public static File createTmpVideoFile(Context context) throws IOException{
+        File dir;
+        if(TextUtils.equals(Environment.getExternalStorageState(), Environment.MEDIA_MOUNTED)) {
+            dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+            if (!dir.exists()) {
+                dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/Camera");
+                if (!dir.exists()) {
+                    dir = getCacheDirectory(context, true);
+                }
+            }
+        }else{
+            dir = getCacheDirectory(context, true);
+        }
+        return File.createTempFile("VIDEO", ".mp4", dir);
+    }
 
     private static final String EXTERNAL_STORAGE_PERMISSION = "android.permission.WRITE_EXTERNAL_STORAGE";
 

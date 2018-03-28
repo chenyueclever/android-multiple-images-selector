@@ -1,4 +1,4 @@
-package com.zfdang.multiple_images_selector;
+package com.cyue.multiple_images_selector;
 
 import android.Manifest;
 import android.app.Activity;
@@ -26,12 +26,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.zfdang.multiple_images_selector.models.FolderItem;
-import com.zfdang.multiple_images_selector.models.FolderListContent;
-import com.zfdang.multiple_images_selector.models.ImageItem;
-import com.zfdang.multiple_images_selector.models.ImageListContent;
-import com.zfdang.multiple_images_selector.utilities.FileUtils;
-import com.zfdang.multiple_images_selector.utilities.StringUtils;
+import com.cyue.multiple_images_selector.models.FolderItem;
+import com.cyue.multiple_images_selector.models.FolderListContent;
+import com.cyue.multiple_images_selector.models.ImageListContent;
+import com.cyue.multiple_images_selector.utilities.FileUtils;
+import com.cyue.multiple_images_selector.utilities.StringUtils;
+
+import com.cyue.multiple_images_selector.models.ImageItem;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,14 +47,14 @@ import rx.schedulers.Schedulers;
 import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 public class ImagesSelectorActivity extends AppCompatActivity
-        implements OnImageRecyclerViewInteractionListener, OnFolderRecyclerViewInteractionListener, View.OnClickListener{
+        implements OnImageRecyclerViewInteractionListener, OnFolderRecyclerViewInteractionListener, View.OnClickListener {
 
     private static final String TAG = "ImageSelector";
     private static final String ARG_COLUMN_COUNT = "column-count";
 
     private static final int MY_PERMISSIONS_REQUEST_STORAGE_CODE = 197;
     private static final int MY_PERMISSIONS_REQUEST_CAMERA_CODE = 341;
-
+    private static final int MY_PERMISSIONS_REQUEST_VIDEO_CODE = 3421;
     private int mColumnCount = 3;
 
     // custom action bars
@@ -72,7 +73,7 @@ public class ImagesSelectorActivity extends AppCompatActivity
 
     private File mTempImageFile;
     private static final int CAMERA_REQUEST_CODE = 694;
-
+    private static final int VIDEO_REQUEST_CODE = 6944;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +81,7 @@ public class ImagesSelectorActivity extends AppCompatActivity
 
         // hide actionbar
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
+        if (actionBar != null) {
             actionBar.hide();
         }
 
@@ -92,7 +93,7 @@ public class ImagesSelectorActivity extends AppCompatActivity
 
         ArrayList<String> selected = intent.getStringArrayListExtra(SelectorSettings.SELECTOR_INITIAL_SELECTED_LIST);
         ImageListContent.SELECTED_IMAGES.clear();
-        if(selected != null && selected.size() > 0) {
+        if (selected != null && selected.size() > 0) {
             ImageListContent.SELECTED_IMAGES.addAll(selected);
         }
 
@@ -178,6 +179,20 @@ public class ImagesSelectorActivity extends AppCompatActivity
         }
     }
 
+
+    public void requestVideoRuntimePermissions() {
+        if (ContextCompat.checkSelfPermission(ImagesSelectorActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(ImagesSelectorActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(ImagesSelectorActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(ImagesSelectorActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA},
+                    MY_PERMISSIONS_REQUEST_VIDEO_CODE);
+        } else {
+            launchVideo();
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -208,6 +223,20 @@ public class ImagesSelectorActivity extends AppCompatActivity
                 }
                 return;
             }
+            case MY_PERMISSIONS_REQUEST_VIDEO_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length == 3 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED&&grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    launchVideo();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(ImagesSelectorActivity.this, getString(R.string.selector_permission_error), Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
         }
     }
 
@@ -231,57 +260,148 @@ public class ImagesSelectorActivity extends AppCompatActivity
                         Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                         String where = MediaStore.Images.Media.SIZE + " > " + SelectorSettings.mMinImageSize;
                         String sortOrder = MediaStore.Images.Media.DATE_ADDED + " DESC";
-
                         contentResolver = getContentResolver();
                         Cursor cursor = contentResolver.query(contentUri, projections, where, null, sortOrder);
                         if (cursor == null) {
                             Log.d(TAG, "call: " + "Empty images");
                         } else if (cursor.moveToFirst()) {
-                            FolderItem allImagesFolderItem = null;
+
                             int pathCol = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
                             int nameCol = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
                             int DateCol = cursor.getColumnIndex(MediaStore.Images.Media.DATE_ADDED);
+                            int tpathCol = 0;
                             do {
+
+                                int id = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media._ID));
+                                String[] thumbColumns1 = {MediaStore.Images.Thumbnails.DATA,
+                                        MediaStore.Images.Thumbnails.IMAGE_ID,};
+                                Cursor thumbCursor = contentResolver.query(
+                                        MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
+                                        thumbColumns1, MediaStore.Images.Thumbnails.IMAGE_ID
+                                                + "=" + id, null, null);
+                                if (thumbCursor.moveToFirst()) {
+                                    tpathCol=  thumbCursor.getColumnIndex(MediaStore.Images.Thumbnails.DATA);
+                                }
+
                                 String path = cursor.getString(pathCol);
                                 String name = cursor.getString(nameCol);
                                 long dateTime = cursor.getLong(DateCol);
+//                                String tpath = thumbCursor.getString(tpathCol);
+                                ImageItem item = new ImageItem(name, path, dateTime, "", -1);
 
-                                ImageItem item = new ImageItem(name, path, dateTime);
 
-                                // if FolderListContent is still empty, add "All Images" option
-                                if(FolderListContent.FOLDERS.size() == 0) {
-                                    // add folder for all image
-                                    FolderListContent.selectedFolderIndex = 0;
-
-                                    // use first image's path as cover image path
-                                    allImagesFolderItem = new FolderItem(getString(R.string.selector_folder_all), "", path);
-                                    FolderListContent.addItem(allImagesFolderItem);
-
-                                    // show camera icon ?
-                                    if(SelectorSettings.isShowCamera) {
-                                        results.add(ImageListContent.cameraItem);
-                                        allImagesFolderItem.addImageItem(ImageListContent.cameraItem);
-                                    }
-                                }
 
                                 // add image item here, make sure it appears after the camera icon
                                 results.add(item);
 
                                 // add current image item to all
-                                allImagesFolderItem.addImageItem(item);
 
-                                // find the parent folder for this image, and add path to folderList if not existed
-                                String folderPath = new File(path).getParentFile().getAbsolutePath();
-                                FolderItem folderItem = FolderListContent.getItem(folderPath);
-                                if (folderItem == null) {
-                                    // does not exist, create it
-                                    folderItem = new FolderItem(StringUtils.getLastPathSegment(folderPath), folderPath, path);
-                                    FolderListContent.addItem(folderItem);
+                            } while (cursor.moveToNext());
+
+
+
+
+
+                        }
+
+
+                        // MediaStore.Video.Thumbnails.DATA:视频缩略图的文件路径
+                        String[] thumbColumns = {MediaStore.Video.Thumbnails.DATA,
+                                MediaStore.Video.Thumbnails.VIDEO_ID,};
+                        // 视频其他信息的查询条件
+                        String[] mediaColumns = {MediaStore.Video.Media._ID,
+                                MediaStore.Video.Media.DATA, MediaStore.Video.Media.DURATION, MediaStore.Video.Media.DISPLAY_NAME, MediaStore.Video.Media.DATE_ADDED};
+                        String sortOrder1 = MediaStore.Video.Media.DATE_ADDED + " DESC";
+                        cursor = contentResolver.query(MediaStore.Video.Media
+                                        .EXTERNAL_CONTENT_URI,
+                                mediaColumns, null, null, sortOrder1);
+
+                        if (cursor == null) {
+
+                        }
+                        if (cursor.moveToFirst()) {
+                            do {
+                                int id = cursor.getInt(cursor
+                                        .getColumnIndex(MediaStore.Video.Media._ID));
+                                Cursor thumbCursor = contentResolver.query(
+                                        MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI,
+                                        thumbColumns, MediaStore.Video.Thumbnails.VIDEO_ID
+                                                + "=" + id, null, null);
+                                String path ="";
+                                String name ="";
+                                long dateTime = 0;
+                                String tpath = "";
+                                int videoTime=0;
+                                if (thumbCursor.moveToFirst()) {
+                                    tpath=thumbCursor.getString(thumbCursor
+                                            .getColumnIndex(MediaStore.Video.Thumbnails.DATA));
                                 }
-                                folderItem.addImageItem(item);
+                                path=cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media
+                                        .DATA));
+                                videoTime= cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video
+                                        .Media.DURATION));
+
+                                name=  cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video
+                                        .Media.DISPLAY_NAME));
+                                dateTime=  cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video
+                                        .Media.DATE_ADDED));
+                                ImageItem item = new ImageItem(name, path, dateTime, tpath, videoTime);
+                                results.add(item);
                             } while (cursor.moveToNext());
                             cursor.close();
-                        } // } else if (cursor.moveToFirst()) {
+                        }
+                        FolderItem allImagesFolderItem = null;
+                        // if FolderListContent is still empty, add "All Images" option
+                        if (FolderListContent.FOLDERS.size() == 0) {
+                            // add folder for all image
+                            FolderListContent.selectedFolderIndex = 0;
+
+                            // use first image's path as cover image path
+                            allImagesFolderItem = new FolderItem(getString(R.string.selector_folder_all), "", "");
+                            FolderListContent.addItem(allImagesFolderItem);
+
+                            // show camera icon ?
+                            if (SelectorSettings.isShowCamera) {
+                                results.add(ImageListContent.cameraItem);
+                                allImagesFolderItem.addImageItem(ImageListContent.cameraItem);
+                            }
+                            if (SelectorSettings.isShowVideo) {
+                                results.add(ImageListContent.videoItem);
+                                allImagesFolderItem.addImageItem(ImageListContent.videoItem);
+                            }
+
+                        }
+
+                        for(int i=0;i<results.size()-1;i++){
+                            for(int j=0;j<results.size()-i-1;j++){
+                                if(results.get(j).getTime()<results.get(j+1).getTime()){
+
+                                    ImageItem temp=results.get(j);
+                                    results.set(j, results.get(j+1));
+                                    results.set(j+1, temp);
+                                }
+                            }
+                        }
+
+
+                        for(int i = 0;i<results.size();i++){
+                            allImagesFolderItem.addImageItem(results.get(i));
+                            if(results.get(i).isCamera()||results.get(i).isVideo())
+                                continue;
+                            // find the parent folder for this image, and add path to folderList if not existed
+                            String folderPath = new File(results.get(i).getPath()).getParentFile().getAbsolutePath();
+                            FolderItem folderItem = FolderListContent.getItem(folderPath);
+                            if (folderItem == null) {
+                                // does not exist, create it
+                                folderItem = new FolderItem(StringUtils.getLastPathSegment(folderPath), folderPath, results.get(i).getPath());
+                                FolderListContent.addItem(folderItem);
+                            }
+                            folderItem.addImageItem(results.get(i));
+                        }
+
+
+
+
                         return Observable.from(results);
                     }
                 })
@@ -301,13 +421,13 @@ public class ImagesSelectorActivity extends AppCompatActivity
                     public void onNext(ImageItem imageItem) {
                         // Log.d(TAG, "onNext: " + imageItem.toString());
                         ImageListContent.addItem(imageItem);
-                        recyclerView.getAdapter().notifyItemChanged(ImageListContent.IMAGES.size()-1);
+                        recyclerView.getAdapter().notifyItemChanged(ImageListContent.IMAGES.size() - 1);
                     }
                 });
     }
 
     public void updateDoneButton() {
-        if(ImageListContent.SELECTED_IMAGES.size() == 0) {
+        if (ImageListContent.SELECTED_IMAGES.size() == 0) {
             mButtonConfirm.setEnabled(false);
         } else {
             mButtonConfirm.setEnabled(true);
@@ -321,7 +441,7 @@ public class ImagesSelectorActivity extends AppCompatActivity
         mFolderPopupWindow.dismiss();
 
         FolderItem folder = FolderListContent.getSelectedFolder();
-        if( !TextUtils.equals(folder.path, this.currentFolderPath) ) {
+        if (!TextUtils.equals(folder.path, this.currentFolderPath)) {
             this.currentFolderPath = folder.path;
             mFolderSelectButton.setText(folder.name);
 
@@ -342,16 +462,18 @@ public class ImagesSelectorActivity extends AppCompatActivity
 
     @Override
     public void onImageItemInteraction(ImageItem item) {
-        if(ImageListContent.bReachMaxNumber) {
+        if (ImageListContent.bReachMaxNumber) {
             String hint = getResources().getString(R.string.selector_reach_max_image_hint, SelectorSettings.mMaxImageNumber);
             Toast.makeText(ImagesSelectorActivity.this, hint, Toast.LENGTH_SHORT).show();
             ImageListContent.bReachMaxNumber = false;
         }
 
-        if(item.isCamera()) {
+        if (item.isCamera()) {
             requestCameraRuntimePermissions();
         }
-
+        if (item.isVideo()) {
+            requestVideoRuntimePermissions();
+        }
         updateDoneButton();
     }
 
@@ -377,11 +499,32 @@ public class ImagesSelectorActivity extends AppCompatActivity
 
     }
 
+    public void launchVideo() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            // set the output file of camera
+            try {
+                mTempImageFile = FileUtils.createTmpVideoFile(this);
+            } catch (IOException e) {
+                Log.e(TAG, "launchCamera: ", e);
+            }
+            if (mTempImageFile != null && mTempImageFile.exists()) {
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempImageFile));
+                startActivityForResult(cameraIntent, VIDEO_REQUEST_CODE);
+            } else {
+                Toast.makeText(this, R.string.camera_temp_file_error, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, R.string.msg_no_camera, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // after capturing image, return the image path as selected result
-        if (requestCode == CAMERA_REQUEST_CODE) {
+        if (requestCode == CAMERA_REQUEST_CODE||requestCode == VIDEO_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 if (mTempImageFile != null) {
                     // notify system
@@ -409,10 +552,10 @@ public class ImagesSelectorActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-        if( v == mButtonBack) {
+        if (v == mButtonBack) {
             setResult(Activity.RESULT_CANCELED);
             finish();
-        } else if(v == mButtonConfirm) {
+        } else if (v == mButtonConfirm) {
             Intent data = new Intent();
             data.putStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS, ImageListContent.SELECTED_IMAGES);
             setResult(Activity.RESULT_OK, data);

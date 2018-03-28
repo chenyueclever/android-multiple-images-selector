@@ -1,4 +1,4 @@
-package com.zfdang.multiple_images_selector.utilities;
+package com.cyue.multiple_images_selector.utilities;
 
 /**
  * Created by zfdang on 2016-4-17.

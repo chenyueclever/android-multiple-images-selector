@@ -1,4 +1,4 @@
-package com.zfdang.multiple_images_selector;
+package com.cyue.multiple_images_selector;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

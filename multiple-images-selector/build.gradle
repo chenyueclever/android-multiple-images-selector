@@ -1,9 +1,9 @@
 apply plugin: 'com.android.library'
 
 ext {
-    PUBLISH_GROUP_ID = 'com.zfdang.multiple-images-selector'
+    PUBLISH_GROUP_ID = 'com.cyue.multiple-images-selector'
     PUBLISH_ARTIFACT_ID = 'multiple-images-selector'
-    PUBLISH_VERSION = '1.1.3'
+    PUBLISH_VERSION = '1.2.1'
 }
 
 android {

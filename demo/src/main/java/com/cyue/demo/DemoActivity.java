@@ -1,4 +1,4 @@
-package com.zfdang.demo;
+package com.cyue.demo;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
-import com.zfdang.multiple_images_selector.SelectorSettings;
+import com.cyue.multiple_images_selector.ImagesSelectorActivity;
+import com.cyue.multiple_images_selector.SelectorSettings;
 
 import java.util.ArrayList;
 

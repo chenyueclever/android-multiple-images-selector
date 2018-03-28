@@ -1,4 +1,4 @@
-package com.zfdang.multiple_images_selector;
+package com.cyue.multiple_images_selector;
 
 import java.util.ArrayList;
 
@@ -17,8 +17,9 @@ public class SelectorSettings {
      */
     public static final String SELECTOR_SHOW_CAMERA = "selector_show_camera";
     public static boolean isShowCamera = true;
+    public static boolean isShowVideo = true;
     public static final String CAMERA_ITEM_PATH = "/CAMERA/CAMERA";
-
+    public static final String VIDEO_ITEM_PATH = "/CAMERA/VIDEO";
     /**
      * initial selected images, full path of images
      */

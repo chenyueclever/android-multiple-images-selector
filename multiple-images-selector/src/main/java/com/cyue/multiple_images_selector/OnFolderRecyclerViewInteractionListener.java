@@ -1,6 +1,6 @@
-package com.zfdang.multiple_images_selector;
+package com.cyue.multiple_images_selector;
 
-import com.zfdang.multiple_images_selector.models.FolderItem;
+import com.cyue.multiple_images_selector.models.FolderItem;
 
 /**
  * Created by zfdang on 2016-4-14.

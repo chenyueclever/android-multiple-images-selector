@@ -1,6 +1,6 @@
-package com.zfdang.multiple_images_selector.models;
+package com.cyue.multiple_images_selector.models;
 
-import com.zfdang.multiple_images_selector.SelectorSettings;
+import com.cyue.multiple_images_selector.SelectorSettings;
 
 import java.util.ArrayList;
 
@@ -33,5 +33,6 @@ public class ImageListContent {
         }
     }
 
-    public static final ImageItem cameraItem = new ImageItem("", SelectorSettings.CAMERA_ITEM_PATH, 0);
+    public static final ImageItem cameraItem = new ImageItem("", SelectorSettings.CAMERA_ITEM_PATH, 1999999999,SelectorSettings.CAMERA_ITEM_PATH,-1);
+    public static final ImageItem videoItem = new ImageItem("", SelectorSettings.VIDEO_ITEM_PATH, 1999999998,SelectorSettings.VIDEO_ITEM_PATH,-1);
 }

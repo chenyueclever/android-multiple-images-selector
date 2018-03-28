@@ -1,8 +1,8 @@
-package com.zfdang.multiple_images_selector.models;
+package com.cyue.multiple_images_selector.models;
 
 import android.util.Log;
 
-import com.zfdang.multiple_images_selector.SelectorSettings;
+import com.cyue.multiple_images_selector.SelectorSettings;
 
 public class ImageItem {
     private static final String TAG = "ImageItem";
@@ -11,17 +11,36 @@ public class ImageItem {
     public String path;
     public String name;
     public long time;
-
-    public ImageItem(String name, String path, long time){
+    public String tPath;
+    public int videoTime=0;
+    public ImageItem(String name, String path, long time,String tPath,int videoTime){
         this.name = name;
         this.path = path;
         this.time = time;
+        this.tPath = tPath;
+        this.videoTime = videoTime;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
 
     public boolean isCamera() {
         return this.path.equals(SelectorSettings.CAMERA_ITEM_PATH);
     }
+
+    public boolean isVideo() {
+        return this.path.equals(SelectorSettings.VIDEO_ITEM_PATH);
+    }
+
 
     @Override
     public boolean equals(Object o) {

@@ -1,4 +1,4 @@
-package com.zfdang.multiple_images_selector.models;
+package com.cyue.multiple_images_selector.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
