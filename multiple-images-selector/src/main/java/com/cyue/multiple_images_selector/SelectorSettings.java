@@ -16,6 +16,7 @@ public class SelectorSettings {
      * show camera
      */
     public static final String SELECTOR_SHOW_CAMERA = "selector_show_camera";
+    public static final String SELECTOR_SHOW_VIDEO = "selector_show_video";
     public static boolean isShowCamera = true;
     public static boolean isShowVideo = true;
     public static final String CAMERA_ITEM_PATH = "/CAMERA/CAMERA";

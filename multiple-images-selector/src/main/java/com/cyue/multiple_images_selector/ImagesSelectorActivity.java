@@ -89,6 +89,7 @@ public class ImagesSelectorActivity extends AppCompatActivity
         Intent intent = getIntent();
         SelectorSettings.mMaxImageNumber = intent.getIntExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, SelectorSettings.mMaxImageNumber);
         SelectorSettings.isShowCamera = intent.getBooleanExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, SelectorSettings.isShowCamera);
+        SelectorSettings.isShowVideo = intent.getBooleanExtra(SelectorSettings.SELECTOR_SHOW_VIDEO, SelectorSettings.isShowVideo);
         SelectorSettings.mMinImageSize = intent.getIntExtra(SelectorSettings.SELECTOR_MIN_IMAGE_SIZE, SelectorSettings.mMinImageSize);
 
         ArrayList<String> selected = intent.getStringArrayListExtra(SelectorSettings.SELECTOR_INITIAL_SELECTED_LIST);
@@ -308,7 +309,7 @@ public class ImagesSelectorActivity extends AppCompatActivity
                         // MediaStore.Video.Thumbnails.DATA:视频缩略图的文件路径
                         String[] thumbColumns = {MediaStore.Video.Thumbnails.DATA,
                                 MediaStore.Video.Thumbnails.VIDEO_ID,};
-                        // 视频其他信息的查询条件
+                        // aaa视频其他信息的查询条件
                         String[] mediaColumns = {MediaStore.Video.Media._ID,
                                 MediaStore.Video.Media.DATA, MediaStore.Video.Media.DURATION, MediaStore.Video.Media.DISPLAY_NAME, MediaStore.Video.Media.DATE_ADDED};
                         String sortOrder1 = MediaStore.Video.Media.DATE_ADDED + " DESC";

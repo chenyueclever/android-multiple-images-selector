@@ -1,9 +1,16 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'com.novoda.bintray-release'
 ext {
     PUBLISH_GROUP_ID = 'com.cyue.multiple-images-selector'
     PUBLISH_ARTIFACT_ID = 'multiple-images-selector'
     PUBLISH_VERSION = '1.2.1'
+}
+
+publish{
+    userOrg="chenyueclever1"
+    groupId = 'com.cyue.multiple-images-selector'
+    artifactId = 'com.cyue.multiple-images-selector'// bintray创建的package
+    publishVersion = '1.2.1'
 }
 
 android {
@@ -21,6 +28,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 

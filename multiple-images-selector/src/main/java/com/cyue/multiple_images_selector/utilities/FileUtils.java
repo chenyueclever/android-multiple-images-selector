@@ -142,7 +142,7 @@ public class FileUtils {
     }
 
     public static Uri getUriByResId(int resId) {
-        // 增加对资源id类型的图片类型判断
+
         return new Uri.Builder().scheme("res").path(String.valueOf(resId)).build();
     }
 
