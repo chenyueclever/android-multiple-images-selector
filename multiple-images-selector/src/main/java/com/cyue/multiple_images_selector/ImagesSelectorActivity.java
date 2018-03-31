@@ -88,6 +88,7 @@ public class ImagesSelectorActivity extends AppCompatActivity
         // get parameters from bundle
         Intent intent = getIntent();
         SelectorSettings.mMaxImageNumber = intent.getIntExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, SelectorSettings.mMaxImageNumber);
+        SelectorSettings.mMaxVideoNumber = intent.getIntExtra(SelectorSettings.SELECTOR_MAX_VIDEO_NUMBER, SelectorSettings.mMaxVideoNumber);
         SelectorSettings.isShowCamera = intent.getBooleanExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, SelectorSettings.isShowCamera);
         SelectorSettings.isShowVideo = intent.getBooleanExtra(SelectorSettings.SELECTOR_SHOW_VIDEO, SelectorSettings.isShowVideo);
         SelectorSettings.mMinImageSize = intent.getIntExtra(SelectorSettings.SELECTOR_MIN_IMAGE_SIZE, SelectorSettings.mMinImageSize);
@@ -467,6 +468,12 @@ public class ImagesSelectorActivity extends AppCompatActivity
             String hint = getResources().getString(R.string.selector_reach_max_image_hint, SelectorSettings.mMaxImageNumber);
             Toast.makeText(ImagesSelectorActivity.this, hint, Toast.LENGTH_SHORT).show();
             ImageListContent.bReachMaxNumber = false;
+        }
+
+        if (ImageListContent.bReachVideoMaxNumber) {
+            String hint = getResources().getString(R.string.selector_reach_max_video_hint, SelectorSettings.mMaxVideoNumber);
+            Toast.makeText(ImagesSelectorActivity.this, hint, Toast.LENGTH_SHORT).show();
+            ImageListContent.bReachVideoMaxNumber = false;
         }
 
         if (item.isCamera()) {

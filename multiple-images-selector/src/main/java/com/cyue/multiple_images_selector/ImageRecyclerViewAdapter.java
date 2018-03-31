@@ -1,6 +1,7 @@
 package com.cyue.multiple_images_selector;
 
 import android.net.Uri;
+import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,8 +102,23 @@ public class ImageRecyclerViewAdapter extends RecyclerView.Adapter<ImageRecycler
                     if(!ImageListContent.isImageSelected(imageItem.path)) {
                         // just select one new image, make sure total number is ok
                         if(ImageListContent.SELECTED_IMAGES.size() < SelectorSettings.mMaxImageNumber) {
-                            ImageListContent.toggleImageSelected(imageItem.path);
-                            notifyItemChanged(position);
+                            int numVideo=0;
+                            for(String item:ImageListContent.SELECTED_IMAGES){
+                                if(item.contains(".mp4"))
+                                    numVideo++;
+                                if(numVideo==SelectorSettings.mMaxVideoNumber)
+                                    break;
+                            }
+                            if(numVideo==SelectorSettings.mMaxVideoNumber&&imageItem.path.contains(".mp4")){
+                                ImageListContent.bReachVideoMaxNumber = true;
+                            }else {
+                                ImageListContent.toggleImageSelected(imageItem.path);
+                                notifyItemChanged(position);
+                            }
+
+
+
+
                         } else {
                             // set flag
                             ImageListContent.bReachMaxNumber = true;

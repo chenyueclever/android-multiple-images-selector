@@ -8,6 +8,7 @@ public class ImageListContent {
     // ImageRecyclerViewAdapter.OnClick will set it to true
     // Activity.OnImageInteraction will show the alert, and set it to false
     public static boolean bReachMaxNumber = false;
+    public static boolean bReachVideoMaxNumber = false;
 
     public static final ArrayList<ImageItem> IMAGES = new ArrayList<ImageItem>();
 

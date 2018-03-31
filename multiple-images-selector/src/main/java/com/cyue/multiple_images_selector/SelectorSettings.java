@@ -10,7 +10,9 @@ public class SelectorSettings {
      * max number of images to be selected
      */
     public static final String SELECTOR_MAX_IMAGE_NUMBER = "selector_max_image_number";
+    public static final String SELECTOR_MAX_VIDEO_NUMBER = "selector_max_video_number";
     public static int mMaxImageNumber = 9;
+    public static int mMaxVideoNumber = 1;
 
     /**
      * show camera
