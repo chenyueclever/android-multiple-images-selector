@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -44,6 +45,8 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import top.zibin.luban.Luban;
+import top.zibin.luban.OnCompressListener;
 import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 public class ImagesSelectorActivity extends AppCompatActivity
@@ -564,10 +567,51 @@ public class ImagesSelectorActivity extends AppCompatActivity
             setResult(Activity.RESULT_CANCELED);
             finish();
         } else if (v == mButtonConfirm) {
-            Intent data = new Intent();
-            data.putStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS, ImageListContent.SELECTED_IMAGES);
-            setResult(Activity.RESULT_OK, data);
-            finish();
+            final List<String> data=new ArrayList<>();
+            Luban.with(this)
+                    .load(ImageListContent.SELECTED_IMAGES)                                   // 传人要压缩的图片列表
+                    .ignoreBy(100)                                  // 忽略不压缩图片的大小
+                    .setCompressListener(new OnCompressListener() {
+                        @Override
+                        public void onStart() {
+
+                        }
+
+                        @Override
+                        public void onSuccess(File file, String url) {
+                            data.add(file.getAbsolutePath());
+                            ImageListContent.SELECTED_IMAGES.remove(url);
+
+                            if( ImageListContent.SELECTED_IMAGES.size()==0){
+                                ImageListContent.SELECTED_IMAGES.addAll(data);
+                                Intent data = new Intent();
+                                data.putStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS, ImageListContent.SELECTED_IMAGES);
+                                setResult(Activity.RESULT_OK, data);
+                                finish();
+                            }
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e, String url) {
+                            data.add(url);
+                            ImageListContent.SELECTED_IMAGES.remove(url);
+                            if( ImageListContent.SELECTED_IMAGES.size()==0){
+                                ImageListContent.SELECTED_IMAGES.addAll(data);
+                                Intent data = new Intent();
+                                data.putStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS, ImageListContent.SELECTED_IMAGES);
+                                setResult(Activity.RESULT_OK, data);
+                                finish();
+                            }
+                        }
+                    }).launch();
+
+
+
+
+
+
+
         }
     }
 }

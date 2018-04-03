@@ -1,1 +1,1 @@
-include ':demo', ':multiple-images-selector'
+include ':demo', ':multiple-images-selector','library'
