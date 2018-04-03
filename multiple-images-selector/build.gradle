@@ -3,14 +3,14 @@ apply plugin: 'com.novoda.bintray-release'
 ext {
     PUBLISH_GROUP_ID = 'com.cyue.multiple-images-selector'
     PUBLISH_ARTIFACT_ID = 'multiple-images-selector'
-    PUBLISH_VERSION = '1.2.1'
+    PUBLISH_VERSION = '1.2.3'
 }
 
-publish{
-    userOrg="chenyueclever1"
+publish {
+    userOrg = "chenyueclever1"
     groupId = 'com.cyue.multiple-images-selector'
     artifactId = 'com.cyue.multiple-images-selector'// bintray创建的package
-    publishVersion = '1.2.1'
+    publishVersion = '1.2.3'
 }
 
 android {
@@ -49,7 +49,7 @@ dependencies {
     // For WebP support, including animated WebP
     compile 'com.facebook.fresco:animated-webp:0.10.0'
     compile 'com.facebook.fresco:webpsupport:0.10.0'
-    compile project(':library')
+
     compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
 }
 
@@ -57,3 +57,18 @@ dependencies {
 // or use the remote copy to keep update with latest changes
 // ./gradlew clean build generateRelease
 apply from: 'https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle'
+
+
+
+task deleteOldJar(type: Delete) {
+    delete 'release/imgselect.jar'
+}
+//task to export contents as jar
+task exportJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('release/')
+    include('classes.jar')
+///Rename the jar
+    rename('classes.jar', 'imgselect.jar')
+}
+exportJar.dependsOn(deleteOldJar, build)

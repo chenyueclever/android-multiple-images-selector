@@ -16,7 +16,7 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'https://dl.bintray.com/chenyueclever1/cy' }
+        maven { url 'https://5565.bintray.com/Maven' }
         jcenter()
     }
 }

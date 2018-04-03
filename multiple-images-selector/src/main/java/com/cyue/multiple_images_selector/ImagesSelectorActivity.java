@@ -27,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cyue.multiple_images_selector.LuBan.Luban;
+import com.cyue.multiple_images_selector.LuBan.OnCompressListener;
 import com.cyue.multiple_images_selector.models.FolderItem;
 import com.cyue.multiple_images_selector.models.FolderListContent;
 import com.cyue.multiple_images_selector.models.ImageListContent;
@@ -34,6 +36,7 @@ import com.cyue.multiple_images_selector.utilities.FileUtils;
 import com.cyue.multiple_images_selector.utilities.StringUtils;
 
 import com.cyue.multiple_images_selector.models.ImageItem;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,11 +48,10 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-import top.zibin.luban.Luban;
-import top.zibin.luban.OnCompressListener;
+
 import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
-public class ImagesSelectorActivity extends AppCompatActivity
+public class ImagesSelectorActivity extends Activity
         implements OnImageRecyclerViewInteractionListener, OnFolderRecyclerViewInteractionListener, View.OnClickListener {
 
     private static final String TAG = "ImageSelector";
@@ -81,12 +83,7 @@ public class ImagesSelectorActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_images_selector);
-
-        // hide actionbar
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
+        Fresco.initialize(getApplicationContext());
 
         // get parameters from bundle
         Intent intent = getIntent();
