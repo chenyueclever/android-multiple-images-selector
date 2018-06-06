@@ -3,14 +3,14 @@ apply plugin: 'com.novoda.bintray-release'
 ext {
     PUBLISH_GROUP_ID = 'com.cyue.multiple-images-selector'
     PUBLISH_ARTIFACT_ID = 'multiple-images-selector'
-    PUBLISH_VERSION = '1.2.3'
+    PUBLISH_VERSION = '1.2.8'
 }
 
 publish {
     userOrg = "chenyueclever1"
     groupId = 'com.cyue.multiple-images-selector'
     artifactId = 'com.cyue.multiple-images-selector'// bintray创建的package
-    publishVersion = '1.2.3'
+    publishVersion = '1.2.8'
 }
 
 android {
@@ -32,6 +32,7 @@ android {
     lintOptions {
         abortOnError false
     }
+
 }
 
 dependencies {
@@ -58,17 +59,33 @@ dependencies {
 // ./gradlew clean build generateRelease
 apply from: 'https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle'
 
-
-
-task deleteOldJar(type: Delete) {
-    delete 'release/imgselect.jar'
-}
-//task to export contents as jar
-task exportJar(type: Copy) {
-    from('build/intermediates/bundles/release/')
-    into('release/')
-    include('classes.jar')
-///Rename the jar
-    rename('classes.jar', 'imgselect.jar')
-}
-exportJar.dependsOn(deleteOldJar, build)
+//apply plugin: 'maven'
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//
+//
+//            snapshotRepository(url: 'http://47.91.244.21:8081/nexus/content/repositories/1/'){
+//                authentication(userName: 'admin', password: 'cy1234')
+//            }
+//            repository(url: 'http://47.91.244.21:8081/nexus/content/repositories/chenyuemvn/') {
+//                authentication(userName: 'admin', password: 'cy1234')
+//            }
+//
+//            pom.project {
+//                version '1.2.6-SNAPSHOT'
+//                artifactId 'chenyueclever1'
+//                groupId 'com.cyue.multiple-images-selector'
+//                packaging 'aar'
+//                description 'dependences lib'
+//            }
+//        }
+//    }
+//}
+//
+//artifacts {
+//    archives file('multiple-images-selector.aar')
+//}
+//
+//
+//
