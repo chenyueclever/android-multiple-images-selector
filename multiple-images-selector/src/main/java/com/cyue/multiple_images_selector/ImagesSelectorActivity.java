@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -504,7 +505,11 @@ public class ImagesSelectorActivity extends Activity
                 Log.e(TAG, "launchCamera: ", e);
             }
             if (mTempImageFile != null && mTempImageFile.exists()) {
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempImageFile));
+
+
+                cameraIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,  FileProvider.getUriForFile(this, getPackageName() + "" +
+                        ".opener.provider", mTempImageFile));
                 startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
             } else {
                 Toast.makeText(this, R.string.camera_temp_file_error, Toast.LENGTH_SHORT).show();
@@ -525,7 +530,10 @@ public class ImagesSelectorActivity extends Activity
                 Log.e(TAG, "launchCamera: ", e);
             }
             if (mTempImageFile != null && mTempImageFile.exists()) {
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempImageFile));
+
+                cameraIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,  FileProvider.getUriForFile(this, getPackageName() + "" +
+                        ".opener.provider", mTempImageFile));
                 startActivityForResult(cameraIntent, VIDEO_REQUEST_CODE);
             } else {
                 Toast.makeText(this, R.string.camera_temp_file_error, Toast.LENGTH_SHORT).show();

@@ -35,8 +35,8 @@ public class DemoActivity extends AppCompatActivity {
                 // min size of image which will be shown; to filter tiny images (mainly icons)
                 intent.putExtra(SelectorSettings.SELECTOR_MIN_IMAGE_SIZE, 100000);
                 // show camera or not
-                intent.putExtra("type",2);
-                intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, false);
+                intent.putExtra("type",1);
+                intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
                 intent.putExtra(SelectorSettings.SELECTOR_SHOW_VIDEO, true);
                 // pass current selected images as the initial value
                 intent.putStringArrayListExtra(SelectorSettings.SELECTOR_INITIAL_SELECTED_LIST, mResults);

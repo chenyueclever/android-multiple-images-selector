@@ -30,6 +30,10 @@
             android:name="com.cyue.multiple_images_selector.ImagesSelectorActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@android:style/Theme.NoTitleBar"/>
+
+        <provider android:name="io.github.pwlin.cordova.plugins.fileopener2.FileProvider" android:authorities="${applicationId}.opener.provider" android:exported="false" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/opener_paths" />
+        </provider>
     </application>
 
 </manifest>
