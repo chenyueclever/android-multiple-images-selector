@@ -564,6 +564,7 @@ public class ImagesSelectorActivity extends Activity
                     Intent resultIntent = new Intent();
                     ImageListContent.clear();
                     ImageListContent.SELECTED_IMAGES.add(mTempImageFile.getAbsolutePath());
+                    resultIntent.putExtra("type", type);
                     resultIntent.putStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS, ImageListContent.SELECTED_IMAGES);
                     setResult(RESULT_OK, resultIntent);
                     finish();

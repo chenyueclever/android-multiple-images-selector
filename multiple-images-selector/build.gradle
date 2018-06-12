@@ -10,7 +10,7 @@ publish {
     userOrg = "chenyueclever1"
     groupId = 'com.cyue.multiple-images-selector'
     artifactId = 'com.cyue.multiple-images-selector'// bintray创建的package
-    publishVersion = '1.2.12'
+    publishVersion = '1.2.13'
 }
 
 android {
