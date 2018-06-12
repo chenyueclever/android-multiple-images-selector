@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.Image;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -62,7 +63,7 @@ public class ImagesSelectorActivity extends Activity
     private static final int MY_PERMISSIONS_REQUEST_CAMERA_CODE = 341;
     private static final int MY_PERMISSIONS_REQUEST_VIDEO_CODE = 3421;
     private int mColumnCount = 3;
-    private int type=0;//图片 视频选择
+    private int type = 0;//图片 视频选择
     // custom action bars
     private ImageView mButtonBack;
     private Button mButtonConfirm;
@@ -94,7 +95,7 @@ public class ImagesSelectorActivity extends Activity
         SelectorSettings.isShowCamera = intent.getBooleanExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, SelectorSettings.isShowCamera);
         SelectorSettings.isShowVideo = intent.getBooleanExtra(SelectorSettings.SELECTOR_SHOW_VIDEO, SelectorSettings.isShowVideo);
         SelectorSettings.mMinImageSize = intent.getIntExtra(SelectorSettings.SELECTOR_MIN_IMAGE_SIZE, SelectorSettings.mMinImageSize);
-        type=intent.getIntExtra("type",1);
+        type = intent.getIntExtra("type", 1);
         ArrayList<String> selected = intent.getStringArrayListExtra(SelectorSettings.SELECTOR_INITIAL_SELECTED_LIST);
         ImageListContent.SELECTED_IMAGES.clear();
         if (selected != null && selected.size() > 0) {
@@ -268,7 +269,7 @@ public class ImagesSelectorActivity extends Activity
                         Cursor cursor = contentResolver.query(contentUri, projections, where, null, sortOrder);
                         Cursor thumbCursor = null;
 
-                        if(type==1||type==3) {
+                        if (type == 1 || type == 3) {
                             if (cursor == null) {
                                 Log.d(TAG, "call: " + "Empty images");
                             } else if (cursor.moveToFirst()) {
@@ -311,7 +312,7 @@ public class ImagesSelectorActivity extends Activity
 
                             }
                         }
-                        if(type==2||type==3) {
+                        if (type == 2 || type == 3) {
                             // MediaStore.Video.Thumbnails.DATA:视频缩略图的文件路径
                             String[] thumbColumns = {MediaStore.Video.Thumbnails.DATA,
                                     MediaStore.Video.Thumbnails.VIDEO_ID,};
@@ -506,10 +507,13 @@ public class ImagesSelectorActivity extends Activity
             }
             if (mTempImageFile != null && mTempImageFile.exists()) {
 
-
-                cameraIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,  FileProvider.getUriForFile(this, getPackageName() + "" +
-                        ".opener.provider", mTempImageFile));
+                if (Build.VERSION.SDK_INT >= 24) {
+                    cameraIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, getPackageName() + "" +
+                            ".opener.provider", mTempImageFile));
+                } else {
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempImageFile));
+                }
                 startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
             } else {
                 Toast.makeText(this, R.string.camera_temp_file_error, Toast.LENGTH_SHORT).show();
@@ -530,10 +534,13 @@ public class ImagesSelectorActivity extends Activity
                 Log.e(TAG, "launchCamera: ", e);
             }
             if (mTempImageFile != null && mTempImageFile.exists()) {
-
-                cameraIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,  FileProvider.getUriForFile(this, getPackageName() + "" +
-                        ".opener.provider", mTempImageFile));
+                if (Build.VERSION.SDK_INT >= 24) {
+                    cameraIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, getPackageName() + "" +
+                            ".opener.provider", mTempImageFile));
+                } else {
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempImageFile));
+                }
                 startActivityForResult(cameraIntent, VIDEO_REQUEST_CODE);
             } else {
                 Toast.makeText(this, R.string.camera_temp_file_error, Toast.LENGTH_SHORT).show();
@@ -582,7 +589,7 @@ public class ImagesSelectorActivity extends Activity
         } else if (v == mButtonConfirm) {
             Intent data = new Intent();
             data.putStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS, ImageListContent.SELECTED_IMAGES);
-            data.putExtra("type",type);
+            data.putExtra("type", type);
             setResult(Activity.RESULT_OK, data);
             finish();
 
