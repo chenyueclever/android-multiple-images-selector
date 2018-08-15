@@ -33,6 +33,6 @@ public class SelectorSettings {
     public static final String SELECTOR_RESULTS = "selector_results";
 
     // it can be used to filter very small images (mainly icons)
-    public static int mMinImageSize = 50000;
+    public static int mMinImageSize = -5;
     public static final String SELECTOR_MIN_IMAGE_SIZE = "selector_min_image_size";
 }

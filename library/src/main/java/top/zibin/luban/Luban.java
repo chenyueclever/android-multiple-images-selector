@@ -20,7 +20,6 @@ import java.util.List;
 public class Luban implements Handler.Callback {
   private static final String TAG = "Luban";
   private static final String DEFAULT_DISK_CACHE_DIR = "luban_disk_cache";
-
   private static final int MSG_COMPRESS_SUCCESS = 0;
   private static final int MSG_COMPRESS_START = 1;
   private static final int MSG_COMPRESS_ERROR = 2;

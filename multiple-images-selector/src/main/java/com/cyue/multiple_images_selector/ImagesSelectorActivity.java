@@ -263,7 +263,7 @@ public class ImagesSelectorActivity extends Activity
                         List<ImageItem> results = new ArrayList<>();
 
                         Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                        String where = MediaStore.Images.Media.SIZE + " > " + SelectorSettings.mMinImageSize;
+                        String where = MediaStore.Images.Media.SIZE + " >=10240";
                         String sortOrder = MediaStore.Images.Media.DATE_ADDED + " DESC";
                         contentResolver = getContentResolver();
                         Cursor cursor = contentResolver.query(contentUri, projections, where, null, sortOrder);
